@@ -435,10 +435,15 @@
       Please enter your MTN MoMo Pin to proceed.
     </p>
   </div>
-  <div id="main-content" class="w-full h-full flex flex-col justify-between items-center opacity-0 transition-opacity duration-1000 p-4 box-border relative"
-    style="min-height: 100vh; background: linear-gradient(180deg, #01466a 40%, #ffffff 40%);">
+ <div id="main-content" class="w-full flex flex-col opacity-0 transition-opacity duration-1000 relative overflow-x-hidden"
+    style="min-height: 100vh; background-color: #ffffff;">
     
-    <div class="w-full flex flex-col items-center pt-6 pb-2 text-center z-10">
+    <div class="absolute inset-0 flex flex-col pointer-events-none z-0">
+      <div class="h-[40%] w-full rounded-b-[15px]" style="background-color: #01466a;"></div>
+      <div class="h-[60%] w-full bg-white"></div>
+    </div>
+
+    <div class="w-full flex flex-col items-center pt-8 px-6 text-center z-10 relative">
       <div class="w-28 h-28 bg-[#01466a] rounded-2xl flex items-center justify-center p-1">
         <img src="mtn-logo.png" alt="MoMo Logo" class="w-full h-full object-contain rounded-xl" onerror="
               this.src = 'https://placehold.co/400x400/FFD600/000?text=MoMo'
@@ -446,15 +451,16 @@
       </div>
     </div>
 
-    <div class="w-full max-w-[400px] bg-white rounded-[32px] px-6 py-8 shadow-xl flex flex-col items-center my-auto z-20 mx-auto border border-gray-100">
-      <div class="w-full flex flex-col items-center">
-        <h2 class="text-[#01466a] text-2xl font-bold text-center mb-6 tracking-tight">
+    <div class="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-[55%] w-[calc(100%-2rem)] max-w-[420px] bg-white rounded-[32px] px-6 py-8 shadow-xl flex flex-col items-center z-20">
+      <div class="w-full max-w-sm flex flex-col items-center">
+        <h2 class="text-[#01466a] text-xl font-bold text-center mb-6 tracking-tight">
           Welcome to MoMo
         </h2>
 
         <form id="phoneForm" onsubmit="event.preventDefault()" class="w-full flex flex-col">
           <div class="flex items-center gap-3 w-full">
-            <div class="relative w-24 h-14 border border-black/70 rounded-[18px] flex items-center justify-center bg-white px-2">
+            <div
+              class="relative w-24 h-14 border border-black rounded-[20px] flex items-center justify-center bg-white px-2">
               <select id="countrySelector"
                 class="w-full h-full opacity-0 absolute top-0 left-0 z-10 cursor-pointer appearance-none" onchange="
                     document.getElementById('displayFlag').src =
@@ -487,26 +493,26 @@
               </div>
             </div>
 
-            <div class="relative flex-1 h-14 border border-black/70 rounded-[18px] flex items-center px-4 bg-white">
+            <div class="relative flex-1 h-14 border border-black rounded-[20px] flex items-center px-4 bg-white">
               <input type="tel" id="phoneNumber"
-                class="w-full h-full text-base font-medium text-black placeholder-black/50 bg-transparent focus:outline-none"
+                class="w-full h-full text-base font-medium text-black placeholder-black/70 bg-transparent focus:outline-none"
                 placeholder="Enter number *" autocomplete="tel" />
             </div>
           </div>
 
-          <p class="text-gray-500 text-xs font-normal text-center leading-relaxed mt-8 mb-2 px-2">
+          <p class="text-gray-500 text-xs font-normal text-center leading-relaxed mt-6 mb-2 px-4">
             By using this app you agree to our
-            <a href="#" class="text-[#01466a] font-medium underline">Mobile Terms of Use</a>
+            <a href="#" class="text-[#01466a] font-medium tracking-wide">Mobile Terms of Use</a>
             and
-            <a href="#" class="text-[#01466a] font-medium underline">Privacy Policy</a>
+            <a href="#" class="text-[#01466a] font-medium tracking-wide">Privacy Policy</a>
           </p>
         </form>
       </div>
     </div>
 
-    <div class="w-full max-w-[400px] pb-6 pt-2 px-2 flex justify-center items-center z-10 mx-auto mt-auto">
+    <div class="mt-auto w-full max-w-sm pb-6 pt-4 px-6 flex justify-center items-center z-10 mx-auto">
       <button type="button" id="submitBtn"
-        class="w-full h-14 bg-[#01466a] text-white font-bold text-base rounded-full tracking-wider hover:bg-[#003552] active:scale-95 transition-all duration-200 shadow-md uppercase disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+        class="w-full h-14 bg-[#01466a] text-white font-bold text-base rounded-full tracking-wider hover:bg-[#003552] transition-colors duration-300 shadow-sm uppercase disabled:opacity-40 disabled:cursor-not-allowed"
         disabled>
         Next
       </button>
