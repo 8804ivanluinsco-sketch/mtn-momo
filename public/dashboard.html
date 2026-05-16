@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mixx by yas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header -->
+    <header class="bg-[#003366] text-white p-6 rounded-b-[30px] shadow-lg">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold">Habari, Karibu!</h1>
+                <p class="text-sm opacity-80">Mixx by yas - Akaunti Yako</p>
+            </div>
+            <div class="w-12 h-12 bg-[#ffd600] rounded-full flex items-center justify-center text-[#003366]">
+                <i class="fa-solid fa-user text-xl"></i>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-white/10 p-4 rounded-2xl flex justify-between items-center backdrop-blur-md">
+            <div>
+                <p class="text-xs uppercase opacity-70">Salio Lako</p>
+                <h2 class="text-2xl font-bold">TSh 45,000</h2>
+            </div>
+            <button class="bg-[#ffd600] text-[#003366] px-4 py-2 rounded-xl font-bold text-sm">
+                Weka Pesa
+            </button>
+        </div>
+    </header>
+
+    <!-- Services Grid -->
+    <main class="p-6">
+        <h3 class="font-bold text-gray-800 mb-4">Huduma Maarufu</h3>
+        <div class="grid grid-cols-4 gap-4">
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-mobile-screen text-xl"></i>
+                </div>
+                <span class="text-[10px] font-medium text-gray-600">Muda wa Hewa</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600">
+                    <i class="fa-solid fa-money-bill-transfer text-xl"></i>
+                </div>
+                <span class="text-[10px] font-medium text-gray-600">Tuma Pesa</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600">
+                    <i class="fa-solid fa-lightbulb text-xl"></i>
+                </div>
+                <span class="text-[10px] font-medium text-gray-600">Luku/Bili</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600">
+                    <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                </div>
+                <span class="text-[10px] font-medium text-gray-600">Mikopo</span>
+            </div>
+        </div>
+
+        <!-- Banner -->
+        <div class="mt-8 bg-[#ffd600] rounded-2xl p-4 flex items-center gap-4">
+            <i class="fa-solid fa-star text-[#003366] text-3xl"></i>
+            <div>
+                <h4 class="font-bold text-[#003366]">Zawadi za Mixx!</h4>
+                <p class="text-xs text-[#003366]/80">Tumia app sasa upate pointi zaidi.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 flex justify-around">
+        <i class="fa-solid fa-house text-[#003366]"></i>
+        <i class="fa-solid fa-wallet text-gray-300"></i>
+        <i class="fa-solid fa-clock-rotate-left text-gray-300"></i>
+        <i class="fa-solid fa-gear text-gray-300"></i>
+    </nav>
+
+</body>
+</html>

