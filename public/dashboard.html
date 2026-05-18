@@ -2,79 +2,299 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - MTN MoMo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-gray-50">
+    <title>MTN MOMO UGANDA | Client Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <header class="bg-[#003366] text-white p-6 rounded-b-[30px] shadow-lg">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold">Hello, Welcome!</h1>
-                <p class="text-sm opacity-80">MTN MoMo - Your Account</p>
-            </div>
-            <div class="w-12 h-12 bg-[#ffd600] rounded-full flex items-center justify-center text-[#003366]">
-                <i class="fa-solid fa-user text-xl"></i>
-            </div>
-        </div>
+    <style>
+        :root {
+            --primary-green: #42b549;
+            --dark-sidebar: #1a1a1a;
+            --bg-light: #f0f2f5;
+            --text-main: #2c3e50;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--dark-sidebar);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+            z-index: 100;
+        }
+
+        .brand-section {
+            padding: 30px 20px;
+            background-color: #111;
+            text-align: center;
+        }
+
+        .brand-section h2 {
+            margin: 0;
+            color: var(--primary-green);
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .status-menu {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .status-menu h4 {
+            color: #7f8c8d;
+            text-transform: uppercase;
+            font-size: 11px;
+            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #ecf0f1;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid transparent;
+        }
+
+        .nav-pending { background: rgba(243, 156, 18, 0.15); border-color: #f39c12; color: #f39c12; }
+        .nav-disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .logout-btn {
+            width: 90%;
+            margin: 20px auto;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Main Workspace */
+        .main-workspace {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .quote-banner {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            border-left: 8px solid var(--primary-green);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .quote-banner h1 { margin: 0 0 10px 0; color: var(--primary-green); font-size: 26px; }
+        .quote-banner p { font-size: 17px; line-height: 1.6; color: #57606f; font-style: italic; margin: 0; }
+
+        /* Grid Layout */
+        .layout-grid {
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 30px;
+        }
+
+        /* Panels */
+        .panel {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .panel h3 { margin-top: 0; font-size: 20px; color: var(--dark-sidebar); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        /* Reviews Wall */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .review-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .review-card span { color: #f39c12; display: block; margin-bottom: 5px; }
+
+        /* Terms List */
+        .terms-list { padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8; }
+        .terms-list li { margin-bottom: 10px; }
+
+        /* Referral & Whatsapp */
+        .ref-box { background: #f0f7f1; border: 1px solid #cce8d0; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .ref-link-row { display: flex; gap: 10px; margin-top: 10px; }
+        .ref-input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; min-width: 0; }
         
-        <div class="mt-8 bg-white/10 p-4 rounded-2xl flex justify-between items-center backdrop-blur-md">
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .whatsapp-btn:hover { background: #1ebc59; transform: scale(1.02); }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 850px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .status-menu {
+                display: flex;
+                overflow-x: auto;
+                gap: 10px;
+                padding: 10px 20px;
+            }
+            .status-menu h4 { display: none; }
+            .nav-item { margin-bottom: 0; white-space: nowrap; padding: 10px 15px; }
+            .logout-btn { width: auto; margin: 10px 20px 20px 20px; }
+            
+            .main-workspace {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .layout-grid { grid-template-columns: 1fr; }
+            .reviews-grid { grid-template-columns: 1fr; }
+            .quote-banner { padding: 25px; }
+            .top-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand-section"><h2>M-SHWARI</h2></div>
+        <div class="status-menu">
+            <h4>TRACKER</h4>
+            <div class="nav-item nav-pending"><span>PENDING REVIEW</span></div>
+            <div class="nav-item nav-disabled"><span>APPROVED</span></div>
+            <div class="nav-item nav-disabled"><span>REJECTED</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="main-workspace">
+        <div class="top-header">
+            <h2 style="margin:0;">Management Console</h2>
+            <div style="text-align: right;">
+                <small style="display:block; color: #999;">Application ID: #MS-77291</small>
+            </div>
+        </div>
+
+        <div class="quote-banner">
+            <h1>Expert Evaluation in Progress</h1>
+            <p>"Financial empowerment is a journey, not a race. Our team is working diligently to verify your credentials and secure your disbursement. Quality auditing ensures a sustainable financial future for our clients."</p>
+        </div>
+
+        <div class="layout-grid">
+            
+            <!-- Left Column: Reviews and Terms -->
             <div>
-                <p class="text-xs uppercase opacity-70">Your Balance</p>
-                <h2 class="text-2xl font-bold">UGX 0.00</h2>
-            </div>
-            <button class="bg-[#ffd600] text-[#003366] px-4 py-2 rounded-xl font-bold text-sm">
-                Deposit Money
-            </button>
-        </div>
-    </header>
+                <div class="panel">
+                    <h3>⭐ Verified Customer Feedback</h3>
+                    <div class="reviews-grid">
+                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Tendai M.</strong>: "Funds were disbursed exactly when I needed them. Great service."</div>
+                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Nyasha K.</strong>: "The referral program actually works! My limit increased quickly."</div>
+                        <div class="review-card"><span>⭐⭐⭐⭐</span><strong>Blessing T.</strong>: "Very professional support from Agent Alex."</div>
+                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Kelvin M.</strong>: "Easiest application process in the market right now."</div>
+                    </div>
+                </div>
 
-    <main class="p-6">
-        <h3 class="font-bold text-gray-800 mb-4">Popular Services</h3>
-        <div class="grid grid-cols-4 gap-4">
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
-                    <i class="fa-solid fa-mobile-screen text-xl"></i>
+                <div class="panel">
+                    <h3>📜 Terms & Regulatory Policy</h3>
+                    <ul class="terms-list">
+                        <li>All loans are subject to a 48-72 hour auditing period prior to disbursement.</li>
+                        <li>Repayments must be completed within the selected duration to avoid a 15% interest penalty.</li>
+                        <li>The referral program is intended to verify community trust; multiple active referrals accelerate processing.</li>
+                        <li>M-Shwari reserves the right to adjust limits based on repayment history and data accuracy.</li>
+                    </ul>
                 </div>
-                <span class="text-[10px] font-medium text-gray-600">Airtime</span>
             </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600">
-                    <i class="fa-solid fa-money-bill-transfer text-xl"></i>
-                </div>
-                <span class="text-[10px] font-medium text-gray-600">Send Money</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600">
-                    <i class="fa-solid fa-lightbulb text-xl"></i>
-                </div>
-                <span class="text-[10px] font-medium text-gray-600">Bills/Umeme</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600">
-                    <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
-                </div>
-                <span class="text-[10px] font-medium text-gray-600">Loans</span>
-            </div>
-        </div>
 
-        <div class="mt-8 bg-[#ffd600] rounded-2xl p-4 flex items-center gap-4">
-            <i class="fa-solid fa-star text-[#003366] text-3xl"></i>
+            <!-- Right Column: Support & Referrals -->
             <div>
-                <h4 class="font-bold text-[#003366]">MTN MoMo Rewards!</h4>
-                <p class="text-xs text-[#003366]/80">Use the app now to earn more points.</p>
+                <div class="panel">
+                    <h3>Action Center</h3>
+                    <div class="ref-box">
+                        <strong style="color: var(--primary-green); font-size: 14px;">Acceleration Link</strong>
+                        <p style="font-size: 12px; margin: 5px 0;">Share this link to move your application up the queue.</p>
+                        <div class="ref-link-row">
+                            <input type="text" class="ref-input" value="https://bit.ly/mshwari-apply" id="refLink" readonly>
+                            <button style="background: var(--primary-green); color:white; border:none; border-radius:4px; padding:0 15px; cursor:pointer;" onclick="copyLink()">Copy</button>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/254785460615" target="_blank" class="whatsapp-btn">
+                        Support: Agent Alex
+                    </a>
+                    
+                    <div style="margin-top: 20px; padding: 15px; border: 1px dashed #ccc; border-radius: 8px;">
+                        <small style="color: #666;"><strong>Note:</strong> Disbursement is sent directly to your registered mobile wallet upon final approval.</small>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 flex justify-around">
-        <i class="fa-solid fa-house text-[#003366]"></i>
-        <i class="fa-solid fa-wallet text-gray-300"></i>
-        <i class="fa-solid fa-clock-rotate-left text-gray-300"></i>
-        <i class="fa-solid fa-gear text-gray-300"></i>
-    </nav>
-
+    <script>
+        function copyLink() {
+            const copyText = document.getElementById("refLink");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Referral link copied!");
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
