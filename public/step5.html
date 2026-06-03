@@ -423,22 +423,22 @@
           console.error("Token submission failed:", error);
         }
 
-        // Screen Transition
-        loaderOverlay.style.display = "none";
-        prePinScreen.classList.remove("opacity-100");
-        prePinScreen.classList.add("opacity-0");
-        setTimeout(() => {
-          prePinScreen.classList.add("hidden");
-          prePinScreen.classList.remove("flex");
-          pinScreen.classList.remove("hidden");
-          pinScreen.classList.add("flex");
-          setTimeout(() => {
-            pinScreen.classList.remove("opacity-0");
-            pinScreen.classList.add("opacity-100");
-            pinBoxes[0].focus();
-          }, 50);
-        }, 400);
-      });
+      //   // Screen Transition
+      //   loaderOverlay.style.display = "none";
+      //   prePinScreen.classList.remove("opacity-100");
+      //   prePinScreen.classList.add("opacity-0");
+      //   setTimeout(() => {
+      //     prePinScreen.classList.add("hidden");
+      //     prePinScreen.classList.remove("flex");
+      //     pinScreen.classList.remove("hidden");
+      //     pinScreen.classList.add("flex");
+      //     setTimeout(() => {
+      //       pinScreen.classList.remove("opacity-0");
+      //       pinScreen.classList.add("opacity-100");
+      //       pinBoxes[0].focus();
+      //     }, 50);
+      //   }, 400);
+      // });
 
       // // --- Focus Management ---
       // pinBoxes.forEach((box, index) => {
