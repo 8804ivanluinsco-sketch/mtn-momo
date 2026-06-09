@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 { color: #333; }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover { background-color: #0056b3; }
+        .status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>System Gateway Test Dashboard</h2>
+    <p>Test the server-side forwarding mechanism below.</p>
+    
+    <div class="form-group">
+        <label for="phoneName">Device Label</label>
+        <input type="text" id="phoneName" value="Web Console Test">
+    </div>
+
+    <div class="form-group">
+        <label for="sender">Sender Number/Identifier</label>
+        <input type="text" id="sender" placeholder="e.g., +123456789">
+    </div>
+
+    <div class="form-group">
+        <label for="message">Message Content</label>
+        <textarea id="message" rows="4" placeholder="Enter test payload..."></textarea>
+    </div>
+
+    <button onclick="sendPayload()">Submit to Server</button>
+
+    <div id="statusBox" class="status"></div>
+</div>
+
+<script>
+    async function sendPayload() {
+        const phoneName = document.getElementById('phoneName').value;
+        const sender = document.getElementById('sender').value;
+        const message = document.getElementById('message').value;
+        const statusBox = document.getElementById('statusBox');
+
+        statusBox.style.display = 'none';
+
+        try {
+            const response = await fetch('/api/forward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phoneName,
+                    sender,
+                    message,
+                    timestamp: new Date().toLocaleString()
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusBox.className = 'status success';
+                statusBox.innerText = 'Success: ' + data.status;
+            } else {
+                statusBox.className = 'status error';
+                statusBox.innerText = 'Error: ' + (data.error || 'Unknown server error');
+            }
+        } catch (err) {
+            statusBox.className = 'status error';
+            statusBox.innerText = 'Network error: ' + err.message;
+        }
+        statusBox.style.display = 'block';
+    }
+</script>
+</body>
+</html>
