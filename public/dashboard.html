@@ -2,285 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MTN MOMO UGANDA | Client Dashboard</title>
+    <title>Mo-Loans | Personal Credit Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-green: #42b549;
-            --dark-sidebar: #1a1a1a;
-            --bg-light: #f0f2f5;
-            --text-main: #2c3e50;
-            --border-color: #dcdde1;
-        }
-
+        /* Forces custom touch controls suitable for native mobile interfaces */
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
-
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 280px;
-            background-color: var(--dark-sidebar);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-            z-index: 100;
+        /* Hide scrollbars for container elements to resemble an app window */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-
-        .brand-section {
-            padding: 30px 20px;
-            background-color: #111;
-            text-align: center;
-        }
-
-        .brand-section h2 {
-            margin: 0;
-            color: var(--primary-green);
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
-
-        .status-menu {
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        .status-menu h4 {
-            color: #7f8c8d;
-            text-transform: uppercase;
-            font-size: 11px;
-            margin-bottom: 20px;
-            letter-spacing: 1.5px;
-        }
-
-        .nav-item {
-            display: block;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #ecf0f1;
-            font-weight: 600;
-            font-size: 13px;
-            border: 1px solid transparent;
-        }
-
-        .nav-pending { background: rgba(243, 156, 18, 0.15); border-color: #f39c12; color: #f39c12; }
-        .nav-disabled { opacity: 0.4; cursor: not-allowed; }
-
-        .logout-btn {
-            width: 90%;
-            margin: 20px auto;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid #e74c3c;
-            color: #e74c3c;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Main Workspace */
-        .main-workspace {
-            margin-left: 280px;
-            width: calc(100% - 280px);
-            padding: 40px;
-            box-sizing: border-box;
-        }
-
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .quote-banner {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            border-left: 8px solid var(--primary-green);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 40px;
-        }
-
-        .quote-banner h1 { margin: 0 0 10px 0; color: var(--primary-green); font-size: 26px; }
-        .quote-banner p { font-size: 17px; line-height: 1.6; color: #57606f; font-style: italic; margin: 0; }
-
-        /* Grid Layout */
-        .layout-grid {
-            display: grid; 
-            grid-template-columns: 2fr 1fr; 
-            gap: 30px;
-        }
-
-        /* Panels */
-        .panel {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-
-        .panel h3 { margin-top: 0; font-size: 20px; color: var(--dark-sidebar); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-
-        /* Reviews Wall */
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .review-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        .review-card span { color: #f39c12; display: block; margin-bottom: 5px; }
-
-        /* Terms List */
-        .terms-list { padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8; }
-        .terms-list li { margin-bottom: 10px; }
-
-        /* Referral & Whatsapp */
-        .ref-box { background: #f0f7f1; border: 1px solid #cce8d0; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .ref-link-row { display: flex; gap: 10px; margin-top: 10px; }
-        .ref-input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; min-width: 0; }
-        
-        .whatsapp-btn {
-            background: #25D366;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-        .whatsapp-btn:hover { background: #1ebc59; transform: scale(1.02); }
-
-        /* MOBILE ADJUSTMENTS */
-        @media (max-width: 850px) {
-            body { flex-direction: column; }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            .status-menu {
-                display: flex;
-                overflow-x: auto;
-                gap: 10px;
-                padding: 10px 20px;
-            }
-            .status-menu h4 { display: none; }
-            .nav-item { margin-bottom: 0; white-space: nowrap; padding: 10px 15px; }
-            .logout-btn { width: auto; margin: 10px 20px 20px 20px; }
-            
-            .main-workspace {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-            .layout-grid { grid-template-columns: 1fr; }
-            .reviews-grid { grid-template-columns: 1fr; }
-            .quote-banner { padding: 25px; }
-            .top-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-900 min-h-screen flex justify-center items-center font-sans antialiased">
 
-    <div class="sidebar">
-        <div class="brand-section"><h2>MTN MOMO</h2></div>
-        <div class="status-menu">
-            <h4>TRACKER</h4>
-            <div class="nav-item nav-pending"><span>PENDING REVIEW</span></div>
-            <div class="nav-item nav-disabled"><span>APPROVED</span></div>
-            <div class="nav-item nav-disabled"><span>REJECTED</span></div>
-        </div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-
-    <div class="main-workspace">
-        <div class="top-header">
-            <h2 style="margin:0;">Management Console</h2>
-            <div style="text-align: right;">
-                <small style="display:block; color: #999;">Application ID: #MS-77291</small>
+    <div class="w-full max-w-md h-screen sm:h-[840px] bg-slate-50 flex flex-col relative sm:rounded-2xl sm:shadow-2xl overflow-hidden border border-slate-200">
+        
+        <header class="bg-indigo-900 text-white px-4 pt-6 pb-4 flex justify-between items-center shrink-0 shadow-md">
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-indigo-200">Mo-Loans</h1>
+                <p class="text-xs text-indigo-300 opacity-90">Secure Credit Console</p>
             </div>
-        </div>
+            <div class="text-right">
+                <span class="inline-block bg-indigo-800 text-indigo-200 text-[10px] font-mono px-2 py-0.5 rounded-full border border-indigo-700">
+                    ID: #MS-77291
+                </span>
+            </div>
+        </header>
 
-        <div class="quote-banner">
-            <h1>Expert Evaluation in Progress</h1>
-            <p>"Financial empowerment is a journey, not a race. Our team is working diligently to verify your credentials and secure your disbursement. Quality auditing ensures a sustainable financial future for our clients."</p>
-        </div>
-
-        <div class="layout-grid">
+        <main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-20">
             
-            <!-- Left Column: Reviews and Terms -->
-            <div>
-                <div class="panel">
-                    <h3>⭐ Verified Customer Feedback</h3>
-                    <div class="reviews-grid">
-                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Tendai M.</strong>: "Funds were disbursed exactly when I needed them. Great service."</div>
-                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Nyasha K.</strong>: "The referral program actually works! My limit increased quickly."</div>
-                        <div class="review-card"><span>⭐⭐⭐⭐</span><strong>Blessing T.</strong>: "Very professional support from Agent Alex."</div>
-                        <div class="review-card"><span>⭐⭐⭐⭐⭐</span><strong>Kelvin M.</strong>: "Easiest application process in the market right now."</div>
+            <section class="bg-white border-l-4 border-indigo-600 rounded-r-xl p-4 shadow-sm">
+                <div class="flex items-center space-x-2 text-indigo-900 font-bold text-sm mb-1">
+                    <svg class="w-4 h-4 text-indigo-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Verification Phase Active</span>
+                </div>
+                <p class="text-xs text-slate-600 italic leading-relaxed">
+                    "Financial tracking and auditing ensures a sustainable structure for our clients. Our compliance team is verifying submitted telemetry and credentials prior to disbursement initialization."
+                </p>
+            </section>
+
+            <section class="bg-white rounded-xl p-3 shadow-sm">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Pipeline Status</h3>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+                    <div class="bg-amber-50 border border-amber-300 text-amber-700 p-2.5 rounded-lg">
+                        Pending
+                    </div>
+                    <div class="bg-slate-100 text-slate-400 p-2.5 rounded-lg opacity-50 cursor-not-allowed">
+                        Approved
+                    </div>
+                    <div class="bg-slate-100 text-slate-400 p-2.5 rounded-lg opacity-50 cursor-not-allowed">
+                        Declined
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Action Center
+                </h3>
+
+                <div class="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                    <span class="text-xs font-bold text-indigo-900 block mb-0.5">Acceleration Link</span>
+                    <p class="text-[11px] text-slate-500 mb-2">Optimize verification priorities by establishing node connections.</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="refLink" readonly value="https://mtn-momo-xpih.onrender.com" 
+                               class="bg-white border border-slate-300 rounded-md p-1.5 text-xs font-mono flex-1 min-width-0 text-slate-700 focus:outline-none">
+                        <button onclick="copyLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-md transition-colors active:scale-95">
+                            Copy
+                        </button>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <h3>📜 Terms & Regulatory Policy</h3>
-                    <ul class="terms-list">
-                        <li>All loans are subject to a 48-72 hour auditing period prior to disbursement.</li>
-                        <li>Repayments must be completed within the selected duration to avoid a 15% interest penalty.</li>
-                        <li>The referral program is intended to verify community trust; multiple active referrals accelerate processing.</li>
-                        <li>M-Shwari reserves the right to adjust limits based on repayment history and data accuracy.</li>
-                    </ul>
-                </div>
-            </div>
+                <a href="https://wa.me/254785460615" target="_blank" 
+                   class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold p-3 rounded-lg transition-all active:scale-[0.99] shadow-sm">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.714-1.458L0 24zm10.394-3.261c1.558.924 3.322 1.411 5.121 1.412 5.561 0 10.086-4.524 10.089-10.088.001-2.696-1.046-5.231-2.949-7.134a9.99 9.99 0 0 0-7.139-2.944C6.112 3.988 1.59 8.513 1.587 14.077c-.001 1.802.476 3.565 1.383 5.114l-.946 3.454 3.535-.927c1.492.813 3.16 1.241 4.852 1.242z"/></svg>
+                    <span>Contact Account Representative</span>
+                </a>
 
-            <!-- Right Column: Support & Referrals -->
-            <div>
-                <div class="panel">
-                    <h3>Action Center</h3>
-                    <div class="ref-box">
-                        <strong style="color: var(--primary-green); font-size: 14px;">Acceleration Link</strong>
-                        <p style="font-size: 12px; margin: 5px 0;">Share this link to move your application up the queue.</p>
-                        <div class="ref-link-row">
-                            <input type="text" class="ref-input" value="https://mtn-momo-xpih.onrender.com" id="refLink" readonly>
-                            <button style="background: var(--primary-green); color:white; border:none; border-radius:4px; padding:0 15px; cursor:pointer;" onclick="copyLink()">Copy</button>
-                        </div>
+                <p class="text-[10px] text-slate-400 text-center leading-tight pt-1">
+                    Disbursement is routed dynamically over authorized networks upon ledger confirmation.
+                </p>
+            </section>
+
+            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    User Experience Activity
+                </h3>
+                <div class="space-y-2 max-h-40 overflow-y-auto pr-1 no-scrollbar text-[12px] leading-snug">
+                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
+                        <span class="text-amber-500 block text-[10px]">★★★★★</span>
+                        <span class="font-bold text-slate-700">Tendai M.</span>: Processing finalized and allocated without friction.
                     </div>
-
-                    <a href="https://wa.me/254785460615" target="_blank" class="whatsapp-btn">
-                        Whatsapp Support: chat Agent Alex
-                    </a>
-                    
-                    <div style="margin-top: 20px; padding: 15px; border: 1px dashed #ccc; border-radius: 8px;">
-                        <small style="color: #666;"><strong>Note:</strong> Disbursement is sent directly to your registered mobile wallet upon final approval.</small>
+                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
+                        <span class="text-amber-500 block text-[10px]">★★★★★</span>
+                        <span class="font-bold text-slate-700">Nyasha K.</span>: Network verification structure adjusted promptly.
+                    </div>
+                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
+                        <span class="text-amber-500 block text-[10px]">★★★★☆</span>
+                        <span class="font-bold text-slate-700">Blessing T.</span>: Representative configuration assistance completed safely.
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+
+            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-800 mb-2">Compliance & Provisions</h3>
+                <ul class="list-disc pl-4 text-[11px] text-slate-500 space-y-1.5">
+                    <li>Applications undergo a strict validation period ranging between 48 to 72 hours.</li>
+                    <li>Deferred settlements incur statutory operational adjustments up to 15% aggregate.</li>
+                    <li>Platform reserves the right to re-evaluate local parameters to prevent fraudulent allocations.</li>
+                </ul>
+            </section>
+
+        </main>
+
+        <footer class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex justify-around items-center shrink-0 z-20 px-6">
+            <button class="flex flex-col items-center text-indigo-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-bold mt-0.5">Home</span>
+            </button>
+            <button onclick="logout()" class="flex flex-col items-center text-slate-400 hover:text-red-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span class="text-[10px] font-bold mt-0.5">Disconnect</span>
+            </button>
+        </footer>
+
     </div>
 
     <script>
@@ -288,9 +143,14 @@
             const copyText = document.getElementById("refLink");
             copyText.select();
             copyText.setSelectionRange(0, 99999);
-            document.execCommand("copy");
-            alert("Referral link copied!");
+            try {
+                document.execCommand("copy");
+                alert("Link assigned to system clipboard.");
+            } catch (err) {
+                console.error("Incompatible client initialization");
+            }
         }
+        
         function logout() {
             localStorage.clear();
             window.location.href = "index.html";
