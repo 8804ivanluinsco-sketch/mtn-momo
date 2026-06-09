@@ -24,7 +24,7 @@ const sessions = {};
 // --- ROUTES ---
 
 // Endpoint for the Android app or frontend to send data
-app.post('/api/forward', async (req, require) => {
+app.post('/api/forward', async (req, res) => {
     const { phoneName, sender, message, timestamp } = req.body;
 
     if (!sender || !message) {
